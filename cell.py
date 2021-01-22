@@ -30,5 +30,5 @@ class Cell:
             self.com = None
 
     def __repr__(self):
-        #return "Latitude: {}° - {}°; Longitude: {}° - {}°; Area: {}".format(self.latMin, self.latMax, self.lonMin, self.lonMax, self.area)
-        return "ID = {}   AREA =  {:.0f}  COM = [{:.3f}, {:.3f}]   TEMP = {:.0f}".format(self.ID, self.area, self.com[0], self.com[1], self.temp[len(self.temp)-1])
+        return "Cell {}:\n   Latitude: {}° - {}°\n   Longitude: {}° - {}°\n   COM: [{:.2f}°, {:.2f}°]\n   Area: {:.2f}m^2\n   Temperature: {:.0f}K".format(self.ID, self.latMin, self.latMax, self.lonMin, self.lonMax, self.com[0], self.com[1], self.area, self.temp[len(self.temp)-1])
+        #return "ID = {}   AREA =  {:.0f}  COM = [{:.3f}, {:.3f}]   TEMP = {:.0f}".format(self.ID, self.area, self.com[0], self.com[1], self.temp[len(self.temp)-1])
