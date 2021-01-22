@@ -37,7 +37,7 @@ class Planet:
                 currentCell = self.cells[i]
                 currentTemp = currentCell.temp[len(currentCell.temp)-1]
                 TempIn = abs(math.sin(i))*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density) #number is depth in m, should be determined
-                TempOut = currentCell.area*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density) #number is depth in m, should be determined
+                TempOut = currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density) #number is depth in m, should be determined
                 #print("Current:{:.0f}   In:{:.8f}   Out:{:.8f}".format(currentTemp, TempIn, TempOut))
                 currentCell.temp.append(currentTemp+TempIn-TempOut)
                 self.cells[i] = currentCell
