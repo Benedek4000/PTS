@@ -1,7 +1,6 @@
 COMprecision=10000 #number of iterations when calculating centre of mass for a cell
 iteration = 5000000
 
-initialTemperature = 278 #initial temperature of the planet in Kelvins
 cellSize = 0.1 #the side of a cell in degrees
 radius = 6.371e+6  #radius of the planet in meters
 orbitalRadius = 1.496e+11 #radius of the orbit of th eplanet in meters

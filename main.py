@@ -6,7 +6,9 @@ import constants as const
 import config as conf
 import matplotlib.pyplot as plt
 
-earth = Planet(conf.radius, conf.orbitalRadius, conf.starLuminosity, conf.axialTilt, conf.specificHeatCapacity, conf.density, conf.albedo, conf.cellSize, conf.initialTemperature)
+initialTemperature = (((1-conf.albedo)*conf.starLuminosity)/(16*math.pi*const.STEFAN_BOLTZMANN_CONSTANT*conf.orbitalRadius**2))**(1/4)
+
+earth = Planet(conf.radius, conf.orbitalRadius, conf.starLuminosity, conf.axialTilt, conf.specificHeatCapacity, conf.density, conf.albedo, conf.cellSize, initialTemperature)
 
 f = open("results.txt", "x")
 nextLine = "iterations"
