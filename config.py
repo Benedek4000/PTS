@@ -1,5 +1,5 @@
 COMprecision=10000 #number of iterations when calculating centre of mass for a cell
-iteration = 864000
+iteration = 5000000
 
 initialTemperature = 278 #initial temperature of the planet in Kelvins
 cellSize = 0.1 #the side of a cell in degrees

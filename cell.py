@@ -1,5 +1,6 @@
 import math
 import constants as const
+import config as conf
 
 class Cell:
 
@@ -10,7 +11,7 @@ class Cell:
     area: area of the cell in m^2
     com: centre of mass of the cell. when the cell is treated as a pointlike object, this is its position [latitude, longitude]""" 
     
-    def __init__(self, ID, latMin, latMax, lonMin, lonMax, initTemp, cellSize, radius, COMprecision, cellsOfInterest):
+    def __init__(self, ID, latMin, latMax, lonMin, lonMax, initTemp, cellSize, radius):
         self.ID = ID
         self.latMin = latMin
         self.latMax = latMax
@@ -18,11 +19,11 @@ class Cell:
         self.lonMax = lonMax
         self.temp = [initTemp]
         self.area = 1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMax))-math.sin(math.radians(latMin)))*4*math.pi*radius**2 #https://www.pmel.noaa.gov/maillists/tmap/ferret_users/fu_2004/msg00023.html  (pi/180)R^2 |sin(lat1)-sin(lat2)| |lon1-lon2|"""
-        if self.ID in cellsOfInterest:
+        if self.ID in conf.cellsOfInterest:
             comLat = 0
-            for i in range(COMprecision+1):
-                if (1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMin + i*cellSize/COMprecision))-math.sin(math.radians(latMin)))) >= self.area/2:
-                    comLat = latMin + i*cellSize/COMprecision-(1/COMprecision)/2
+            for i in range(conf.COMprecision+1):
+                if (1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMin + i*cellSize/conf.COMprecision))-math.sin(math.radians(latMin)))) >= self.area/2:
+                    comLat = latMin + i*cellSize/conf.COMprecision-(1/conf.COMprecision)/2
                     break
             self.com = [round(comLat, 4), round((lonMax+lonMin)/2, 4)]
         else:
