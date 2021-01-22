@@ -21,8 +21,8 @@ class Cell:
         self.area = 1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMax))-math.sin(math.radians(latMin)))*4*math.pi*radius**2 #https://www.pmel.noaa.gov/maillists/tmap/ferret_users/fu_2004/msg00023.html  (pi/180)R^2 |sin(lat1)-sin(lat2)| |lon1-lon2|"""
         if self.ID in conf.cellsOfInterest:
             comLat = 0
-            for i in range(conf.COMprecision+1):
-                if (1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMin + i*cellSize/conf.COMprecision))-math.sin(math.radians(latMin)))) >= self.area/2:
+            for i in range(conf.COMprecision):
+                if (1/720*abs(lonMax-lonMin)*abs(math.sin(math.radians(latMin + i*cellSize/conf.COMprecision))-math.sin(math.radians(latMin)))*4*math.pi*radius**2) >= self.area/2:
                     comLat = latMin + i*cellSize/conf.COMprecision-(1/conf.COMprecision)/2
                     break
             self.com = [round(comLat, 4), round((lonMax+lonMin)/2, 4)]

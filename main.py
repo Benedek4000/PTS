@@ -22,5 +22,11 @@ for t in trange(conf.numberOfIterations, desc="Simulating Temperature (1 state/i
 f.close()
 
 for i in conf.cellsOfInterest:
-    plt.plot(earth.cells[i].temp)
+    x = []
+    for j in range(conf.numberOfIterations+1):
+        x.append(j*conf.iterationTime)
+    plt.plot(x, earth.cells[i].temp, label="lat:{:.2f}°, lon:{:.2f}°".format(earth.cells[i].com[0], earth.cells[i].com[1]))
+plt.xlabel("Time (s)")
+plt.ylabel("Temperature (K)")
+plt.legend()
 plt.savefig(conf.targetPlotFile)
