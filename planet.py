@@ -38,18 +38,17 @@ class Planet:
         for i in conf.cellsOfInterest:
                 currentCell = self.cells[i]
                 currentTemp = currentCell.temp[len(currentCell.temp)-1]
-                angleDueRotation = currentCell.com[1]-const.LON_RANGE*(tqdmValue*conf.iterationTime/self.dayLength)
-                angleOfIncidence = angleDueRotation
-                #print(str(tqdmValue*conf.iterationTime/self.dayLength), str(angleOfIncidence), str(math.cos(math.radians(angleOfIncidence))))
-                if math.cos(math.radians(angleOfIncidence)) > 0:
-                    TempIn = math.cos(math.radians(angleOfIncidence))*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
+                sinAngleOfIncidence = math.sin(math.radians(self.axialTilt))*math.cos(math.radians(const.LON_RANGE*tqdmValue*conf.iterationTime/self.period))*math.sin(math.radians(currentCell.com[0]))+math.cos(math.radians(self.axialTilt))*math.cos(math.radians(const.LON_RANGE*tqdmValue*conf.iterationTime/self.period))*math.cos(math.radians(currentCell.com[1]-const.LON_RANGE*tqdmValue*conf.iterationTime/self.dayLength)*math.cos(math.radians(currentCell.com[0])))
+                if tqdmValue%288==0:
+                    print(str(math.degrees(math.asin(sinAngleOfIncidence))))
+                if sinAngleOfIncidence > 0:
+                    TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
                 else:
                     TempIn = 0
                 TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
-                #print("Current:{:.0f}   In:{:.8f}   Out:{:.8f}".format(currentTemp, TempIn, TempOut))
                 currentCell.temp.append(currentTemp+TempIn-TempOut)
                 self.cells[i] = currentCell
                 nextLine = nextLine + ";" + str(round(currentCell.temp[len(currentCell.temp)-1], 1))
         nextLine = nextLine + "\n"
-        if tqdmValue%conf.iterationPerSave: 
+        if tqdmValue%conf.iterationPerSave==0: 
             fileToWrite.write(nextLine)

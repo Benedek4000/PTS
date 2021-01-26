@@ -2,9 +2,9 @@ targetDataFile = "results.txt"
 targetPlotFile = "plot.png"
 
 COMprecision = 10000 #number of iterations when calculating centre of mass for a cell
-numberOfIterations = 365*24*12 #number of iterations
+numberOfIterations = 1*365*24*12 #number of iterations
 iterationTime = 300 #time interval between  in seconds
-iterationPerSave = 3 #save after every x iteration
+iterationPerSave = 10 #save after every x iteration
 
 cellSize = 0.1 #the side of a cell in degrees
 radius = 6.371e+6  #radius of the planet in meters
