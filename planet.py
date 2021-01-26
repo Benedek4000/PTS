@@ -11,10 +11,11 @@ class Planet:
     """class describing the planet
     """
 
-    def __init__(self, radius, orbitalRadius, starLuminosity, starMass, axialTilt, specificHeatCapacity, density, albedo, cellSize, initialTemperature):
+    def __init__(self, radius, orbitalRadius, starLuminosity, starMass, axialTilt, dayLength, specificHeatCapacity, density, albedo, cellSize, initialTemperature):
         self.radius = radius #m
         self.axialTilt = axialTilt #degrees
         self.density = density
+        self.dayLength = dayLength
         self.period = ((4*math.pi**2*orbitalRadius**3)/(const.GRAVITATIONAL_CONSTANT*starMass))**(1/2) #s   T^2 = ((4*pi^2)/(G*M))*r^3
         self.maxEnergyIn = (1-albedo)*starLuminosity/(4*math.pi*orbitalRadius**2) #J m^-2   E/A = L*(1-a)/(4*pi*R^2), Sun at 90 degrees
         self.SHC = specificHeatCapacity #J kg^-1 K^-1
@@ -37,7 +38,13 @@ class Planet:
         for i in conf.cellsOfInterest:
                 currentCell = self.cells[i]
                 currentTemp = currentCell.temp[len(currentCell.temp)-1]
-                TempIn = 0.4*abs(math.sin(0.5*math.pi*i/3240000))*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
+                angleDueRotation = currentCell.com[1]-const.LON_RANGE*(tqdmValue*conf.iterationTime/self.dayLength)
+                angleOfIncidence = angleDueRotation
+                #print(str(tqdmValue*conf.iterationTime/self.dayLength), str(angleOfIncidence), str(math.cos(math.radians(angleOfIncidence))))
+                if math.cos(math.radians(angleOfIncidence)) > 0:
+                    TempIn = math.cos(math.radians(angleOfIncidence))*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
+                else:
+                    TempIn = 0
                 TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
                 #print("Current:{:.0f}   In:{:.8f}   Out:{:.8f}".format(currentTemp, TempIn, TempOut))
                 currentCell.temp.append(currentTemp+TempIn-TempOut)

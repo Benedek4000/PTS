@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 initialTemperature = (((1-conf.albedo)*conf.starLuminosity)/(16*math.pi*const.STEFAN_BOLTZMANN_CONSTANT*conf.orbitalRadius**2))**(1/4) #T=((1-a)L/(16*pi*sigma*d^2))^(1/4)
 
-earth = Planet(conf.radius, conf.orbitalRadius, conf.starLuminosity, conf.starMass, conf.axialTilt, conf.specificHeatCapacity, conf.density, conf.albedo, conf.cellSize, initialTemperature)
+earth = Planet(conf.radius, conf.orbitalRadius, conf.starLuminosity, conf.starMass, conf.axialTilt, conf.dayLength, conf.specificHeatCapacity, conf.density, conf.albedo, conf.cellSize, initialTemperature)
 
 f = open(conf.targetDataFile, "x")
 nextLine = "iterations"
