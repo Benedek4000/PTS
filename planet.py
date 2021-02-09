@@ -52,8 +52,8 @@ class Planet:
                 AngleOfIncidence = np.sign(currentCell.com[0])*mid_angle-angle_range*math.cos(math.radians(currentCell.com[1]-const.LON_RANGE*tqdmValue*conf.iterationTime/self.dayLength))
                 sinAngleOfIncidence = math.sin(math.radians(AngleOfIncidence))
                 sinAngleOfIncidence = np.heaviside(sinAngleOfIncidence, 0)*sinAngleOfIncidence
-                TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
-                TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
+                TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*conf.star_penetration_depth*self.density)
+                TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*conf.star_penetration_depth*self.density)
                 currentCell.temp.append(currentTemp+TempIn-TempOut)
                 self.cells[i] = currentCell
                 nextLine = nextLine + ";" + str(round(currentCell.temp[len(currentCell.temp)-1], 1))

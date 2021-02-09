@@ -7,6 +7,7 @@ iterationTime = 300 #time interval between  in seconds
 iterationPerSave = 10 #save after every x iteration
 
 cellSize = 0.1 #the side of a cell in degrees
+star_penetration_depth = 0.1 #the depth which the radiation reaches in the surface of the planet in meters
 radius = 6.371e+6  #radius of the planet in meters
 orbitalRadius = 1.496e+11 #radius of the orbit of the planet in meters
 starLuminosity = 3.828e+26 #in Watts(J/s)
