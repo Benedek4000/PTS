@@ -11,18 +11,18 @@ class Planet:
     """class describing the planet
     """
 
-    def __init__(self, radius, orbitalRadius, starLuminosity, starMass, axialTilt, dayLength, specificHeatCapacity, density, albedo, cellSize, initialTemperature):
+    def __init__(self, radius, orbitalRadius, starLuminosity, starMass, obliquity, dayLength, specificHeatCapacity, density, albedo, cellSize, initialTemperature):
         self.radius = radius #m
-        self.axialTilt = axialTilt #degrees
+        self.obliquity = obliquity #degrees
         self.density = density
         self.dayLength = dayLength
         self.period = ((4*math.pi**2*orbitalRadius**3)/(const.GRAVITATIONAL_CONSTANT*starMass))**(1/2) #s   T^2 = ((4*pi^2)/(G*M))*r^3
-        self.maxEnergyIn = (1-albedo)*starLuminosity/(4*math.pi*orbitalRadius**2) #J m^-2   E/A = L*(1-a)/(4*pi*R^2), Sun at 90 degrees
+        self.maxEnergyIn = (1-albedo)*starLuminosity/(4*math.pi*orbitalRadius**2) #J s^-1 m^-2   E/A = L*(1-a)/(4*pi*R^2), Sun at 90 degrees
         self.SHC = specificHeatCapacity #J kg^-1 K^-1
         self.cells = self.createCells(cellSize, initialTemperature, radius)
 
     def __repr__(self):
-        return "r={:.0f}   AxialTilt={:.2f}   MaxEnergyIn={}   SHC={}".format(self.radius, self.axialTilt, self.maxEnergyIn, self.SHC)
+        return "r={:.0f}   Obliquity={:.2f}   MaxEnergyIn={}   SHC={}".format(self.radius, self.obliquity, self.maxEnergyIn, self.SHC)
 
     def createCells(self, cellSize, initialTemperature, radius):
         cells = {}
@@ -38,13 +38,21 @@ class Planet:
         for i in conf.cellsOfInterest:
                 currentCell = self.cells[i]
                 currentTemp = currentCell.temp[len(currentCell.temp)-1]
-                sinAngleOfIncidence = math.sin(math.radians(self.axialTilt))*math.cos(math.radians(const.LON_RANGE*tqdmValue*conf.iterationTime/self.period))*math.sin(math.radians(currentCell.com[0]))+math.cos(math.radians(self.axialTilt))*math.cos(math.radians(const.LON_RANGE*tqdmValue*conf.iterationTime/self.period))*math.cos(math.radians(currentCell.com[1]-const.LON_RANGE*tqdmValue*conf.iterationTime/self.dayLength)*math.cos(math.radians(currentCell.com[0])))
-                if tqdmValue%288==0:
-                    print(str(math.degrees(math.asin(sinAngleOfIncidence))))
-                if sinAngleOfIncidence > 0:
-                    TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
+                eff_obliquity = -self.obliquity*math.cos(2*math.pi*tqdmValue*conf.iterationTime/self.period)
+                if (90-abs(currentCell.com[0])+eff_obliquity)<90:
+                    max_angle = 90-abs(currentCell.com[0])+eff_obliquity
                 else:
-                    TempIn = 0
+                    max_angle = 90+abs(currentCell.com[0])-eff_obliquity
+                if (-90+abs(currentCell.com[0])+eff_obliquity)>-90:
+                    min_angle = -90+abs(currentCell.com[0])+eff_obliquity
+                else:
+                    min_angle = -90-abs(currentCell.com[0])-eff_obliquity
+                mid_angle = (max_angle+min_angle)/2
+                angle_range = (max_angle-min_angle)/2
+                AngleOfIncidence = np.sign(currentCell.com[0])*mid_angle-angle_range*math.cos(math.radians(currentCell.com[1]-const.LON_RANGE*tqdmValue*conf.iterationTime/self.dayLength))
+                sinAngleOfIncidence = math.sin(math.radians(AngleOfIncidence))
+                sinAngleOfIncidence = np.heaviside(sinAngleOfIncidence, 0)*sinAngleOfIncidence
+                TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
                 TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*const.SUN_PENETRATION_DEPTH*self.density)
                 currentCell.temp.append(currentTemp+TempIn-TempOut)
                 self.cells[i] = currentCell
