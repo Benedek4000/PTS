@@ -22,7 +22,6 @@ if (conf.starMass >= 55*const.SUN_MASS):
     a = 1
     c = 32000                                                                           #numbers taken from https://en.wikipedia.org/wiki/Mass%E2%80%93luminosity_relation
 starLuminosity = const.SUN_LUMINOSITY*(c*(conf.starMass/const.SUN_MASS)**a) #L/L_o=c*(M/M_o)^a
-print(starLuminosity)
 
 initialTemperature = (((1-conf.albedo)*starLuminosity)/(16*math.pi*const.STEFAN_BOLTZMANN_CONSTANT*conf.orbitalRadius**2))**(1/4) #T=((1-a)L/(16*pi*sigma*d^2))^(1/4)
 
