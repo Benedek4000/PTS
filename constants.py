@@ -4,3 +4,4 @@ LAT_RANGE = 180
 LON_RANGE = 360
 SUN_MASS = 1.989e+30
 SUN_LUMINOSITY = 3.828e+26
+GREENHOUSE_EFFECT_COEFFICIENT = 0.984 #https://www.hou.usra.edu/meetings/lpsc2020/pdf/3074.pdf

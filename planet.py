@@ -27,14 +27,15 @@ class Planet:
     def createCells(self, cellSize, initialTemperature, radius):
         cells = {}
         id = 0
-        for i in trange(int(const.LAT_RANGE/cellSize), desc="Creating Cells ("+"{:.0f}".format(const.LON_RANGE/cellSize)+"/it)"):
+        #for i in trange(int(const.LAT_RANGE/cellSize), desc="Creating Cells ("+"{:.0f}".format(const.LON_RANGE/cellSize)+"/it)"):
+        for i in range(int(const.LAT_RANGE/cellSize)):
             for j in range(int(const.LON_RANGE/cellSize)):
                 cells.update({id: Cell(id, -90+i*cellSize, -90+cellSize+i*cellSize, 0+j*cellSize, 0+cellSize+j*cellSize, initialTemperature, cellSize, radius)})
                 id = id + 1
         return cells
 
-    def calculateNextState(self, tqdmValue, fileToWrite):
-        nextLine = str(tqdmValue*conf.iterationTime)
+    def xcalculateNextState(self, tqdmValue, fileToWrite):
+        #nextLine = str(tqdmValue*conf.iterationTime)
         for i in conf.cellsOfInterest:
                 currentCell = self.cells[i]
                 currentTemp = currentCell.temp[len(currentCell.temp)-1]
@@ -56,7 +57,30 @@ class Planet:
                 TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*conf.star_penetration_depth*self.density)
                 currentCell.temp.append(currentTemp+TempIn-TempOut)
                 self.cells[i] = currentCell
-                nextLine = nextLine + ";" + str(round(currentCell.temp[len(currentCell.temp)-1], 1))
-        nextLine = nextLine + "\n"
-        if tqdmValue%conf.iterationPerSave==0: 
-            fileToWrite.write(nextLine)
+                #nextLine = nextLine + ";" + str(round(currentCell.temp[len(currentCell.temp)-1], 1))
+        #nextLine = nextLine + "\n"
+        #if tqdmValue%conf.iterationPerSave==0: 
+            #fileToWrite.write(nextLine)
+
+    def calculateNextState(self, tqdmValue):
+        for i in conf.cellsOfInterest:
+                currentCell = self.cells[i]
+                currentTemp = currentCell.temp[len(currentCell.temp)-1]
+                eff_obliquity = -self.obliquity*math.cos(2*math.pi*tqdmValue*conf.iterationTime/self.period)
+                if (90-abs(currentCell.com[0])+eff_obliquity)<90:
+                    max_angle = 90-abs(currentCell.com[0])+eff_obliquity
+                else:
+                    max_angle = 90+abs(currentCell.com[0])-eff_obliquity
+                if (-90+abs(currentCell.com[0])+eff_obliquity)>-90:
+                    min_angle = -90+abs(currentCell.com[0])+eff_obliquity
+                else:
+                    min_angle = -90-abs(currentCell.com[0])-eff_obliquity
+                mid_angle = (max_angle+min_angle)/2
+                angle_range = (max_angle-min_angle)/2
+                AngleOfIncidence = np.sign(currentCell.com[0])*mid_angle-angle_range*math.cos(math.radians(currentCell.com[1]-const.LON_RANGE*tqdmValue*conf.iterationTime/self.dayLength))
+                sinAngleOfIncidence = math.sin(math.radians(AngleOfIncidence))
+                sinAngleOfIncidence = np.heaviside(sinAngleOfIncidence, 0)*sinAngleOfIncidence
+                TempIn = sinAngleOfIncidence*conf.iterationTime*self.maxEnergyIn*currentCell.area/(self.SHC*currentCell.area*conf.star_penetration_depth*self.density)
+                TempOut = conf.iterationTime*currentCell.area*conf.emissivity*const.STEFAN_BOLTZMANN_CONSTANT*currentTemp**4/(self.SHC*currentCell.area*conf.star_penetration_depth*self.density)
+                currentCell.temp.append(currentTemp+TempIn-TempOut)
+                self.cells[i] = currentCell
